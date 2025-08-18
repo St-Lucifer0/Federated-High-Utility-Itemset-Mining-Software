@@ -1,0 +1,38 @@
+{
+  "test_metadata": {
+    "timestamp": "2025-08-12T10:20:01.066928",
+    "test_suite": "Comprehensive Federated FP-Growth Testing",
+    "total_execution_time_seconds": 10.84374475479126,
+    "chapter_requirements_covered": [
+      "4.3: Pseudo-projection and incremental learning",
+      "4.4: Enhanced FP-Growth algorithm",
+      "4.5: Federated learning with Laplace DP"
+    ]
+  },
+  "test_results": {
+    "chess_data.csv": {
+      "min_util_50": {
+        "error": "FederatedFPGrowth.__init__() got an unexpected keyword argument 'num_clients'"
+      },
+      "min_util_100": {
+        "error": "FederatedFPGrowth.__init__() got an unexpected keyword argument 'num_clients'"
+      },
+      "min_util_200": {
+        "error": "FederatedFPGrowth.__init__() got an unexpected keyword argument 'num_clients'"
+      }
+    }
+  },
+  "summary_statistics": {
+    "total_datasets_tested": 1,
+    "total_configurations_tested": 3,
+    "successful_tests": 0,
+    "failed_tests": 3,
+    "average_federated_accuracy": 0,
+    "average_privacy_cost": 0,
+    "average_pseudo_projection_improvement": 0
+  },
+  "key_findings": [
+    "Tested 1 datasets with 3 configurations",
+    "Success rate: 0.0%"
+  ]
+}

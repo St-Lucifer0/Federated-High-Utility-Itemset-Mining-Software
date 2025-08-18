@@ -1,0 +1,29 @@
+# Requirements for Federated Learning Test Suite
+# Install with: pip install -r requirements.txt
+
+# Core scientific computing
+numpy>=1.21.0
+pandas>=1.3.0
+
+# Visualization
+matplotlib>=3.4.0
+seaborn>=0.11.0
+
+# System monitoring
+psutil>=5.8.0
+
+# Network communication (built-in modules)
+# socket, threading, pickle, json - included with Python
+
+# Data processing (built-in modules)  
+# os, sys, time, datetime, argparse - included with Python
+
+# Optional: For enhanced data analysis
+scipy>=1.7.0
+scikit-learn>=1.0.0
+
+# Optional: For better progress bars
+tqdm>=4.62.0
+
+# Optional: For advanced plotting
+plotly>=5.0.0
