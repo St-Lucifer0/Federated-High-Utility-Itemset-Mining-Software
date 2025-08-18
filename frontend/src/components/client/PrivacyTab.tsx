@@ -179,20 +179,20 @@ const PrivacyTab: React.FC<PrivacyTabProps> = ({ clientData, setClientData }) =>
           
           <div className="text-center">
             <div className="text-2xl font-bold text-purple-600">
-              {Math.round((1 / privacyConfig.epsilon) * 10)}%
+              {Math.round(Math.min((1 / privacyConfig.epsilon) * 20, 100))}%
             </div>
             <div className="text-sm text-gray-600">Noise Added</div>
             <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
               <div 
                 className="bg-purple-600 h-2 rounded-full"
-                style={{ width: `${Math.min((1 / privacyConfig.epsilon) * 10, 100)}%` }}
+                style={{ width: `${Math.min((1 / privacyConfig.epsilon) * 20, 100)}%` }}
               ></div>
             </div>
           </div>
         </div>
         
         <div className="mt-4 text-sm text-gray-600 text-center">
-          Current settings will add approximately {((1 / privacyConfig.epsilon) * 10).toFixed(1)}% noise to your patterns
+          Current settings will add approximately {((1 / privacyConfig.epsilon) * 20).toFixed(1)}% noise to your patterns
         </div>
       </div>
 

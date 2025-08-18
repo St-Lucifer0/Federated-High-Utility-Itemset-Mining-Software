@@ -24,9 +24,13 @@ const ClientDashboard: React.FC = () => {
   const [clientData, setClientData] = useState({
     transactions: [] as Transaction[],
     minedPatterns: [] as Pattern[],
-    privacyConfig: { epsilon: 1.0, noiseType: 'laplace', hashPatterns: false },
+    privacyConfig: { 
+      epsilon: 1.0, 
+      noiseType: 'laplace' as 'laplace' | 'gaussian', 
+      hashPatterns: false 
+    },
     miningStats: null,
-    logs: [] as string[],
+    logs: [] as any[],
     storeId: '', // Will be set after registration
     storeName: '', // Will be set after registration
     isRegistered: false

@@ -18,10 +18,10 @@ import heapq
 import weakref
 from functools import lru_cache
 
-from .item import Item
-from .itemset import Itemset
-from .up_tree import UPTree
-from .up_node import UPNode
+from item import Item
+from itemset import Itemset
+from up_tree import UPTree
+from up_node import UPNode
 
 
 @dataclass

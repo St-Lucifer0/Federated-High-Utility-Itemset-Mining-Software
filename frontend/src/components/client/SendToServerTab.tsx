@@ -16,7 +16,7 @@ const SendToServerTab: React.FC<SendToServerTabProps> = ({ clientData, setClient
     timestamp?: Date;
   }>({ status: null, message: '' });
 
-  const hasPatterns = clientData.minedPatterns && clientData.minedPatterns.length > 0;
+  const hasPatterns = clientData?.minedPatterns && clientData.minedPatterns.length > 0;
   const currentRound = 0;
   const simulateServerConnection = async () => {
     setIsSending(true);
@@ -49,9 +49,9 @@ const SendToServerTab: React.FC<SendToServerTabProps> = ({ clientData, setClient
         }
       };
       
-      setClientData(prev => ({
+      setClientData((prev: any) => ({
         ...prev,
-        logs: [...prev.logs, newLog]
+        logs: [...(prev.logs || []), newLog]
       }));
     } else {
       setServerResponse({
@@ -65,7 +65,7 @@ const SendToServerTab: React.FC<SendToServerTabProps> = ({ clientData, setClient
   };
 
   const applyPrivacyToPatterns = (patterns: any[]) => {
-    const { epsilon, noiseType, hashPatterns } = clientData.privacyConfig;
+    const { epsilon, hashPatterns } = clientData.privacyConfig;
     
     if (!patterns || patterns.length === 0) return [];
     

@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass, field
 from typing import Optional, List, Dict
-from .item import Item
+from item import Item
 
 
 

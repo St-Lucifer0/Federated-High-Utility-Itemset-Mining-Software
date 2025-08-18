@@ -135,7 +135,7 @@ class ApiService {
     });
   }
 
-  async getTransactions(storeId: string, limit: number = 100): Promise<{ transactions: Transaction[]; count: number }> {
+  async getTransactions(storeId: string, limit: number = 10000): Promise<{ transactions: Transaction[]; count: number }> {
     return this.request(`/transactions/${storeId}?limit=${limit}`);
   }
 
@@ -185,6 +185,18 @@ class ApiService {
   async sendHeartbeat(storeId: string): Promise<{ message: string; store_id: string; status: string; timestamp: string }> {
     return this.request(`/stores/${storeId}/heartbeat`, {
       method: 'POST',
+    });
+  }
+
+  async disconnectStore(storeId: string): Promise<{ message: string; store_id: string; status: string }> {
+    return this.request(`/stores/${storeId}/disconnect`, {
+      method: 'POST',
+    });
+  }
+
+  async removeStore(storeId: string): Promise<{ message: string; store_id: string }> {
+    return this.request(`/stores/${storeId}`, {
+      method: 'DELETE',
     });
   }
 

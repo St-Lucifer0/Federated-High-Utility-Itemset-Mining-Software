@@ -296,6 +296,44 @@ router.put('/:store_id',
   }
 );
 
+// Disconnect store (set to inactive)
+router.post('/:store_id/disconnect',
+  param('store_id').isString().notEmpty().withMessage('Store ID is required'),
+  handleValidationErrors,
+  async (req, res, next) => {
+    const db = getDatabase();
+    const { store_id } = req.params;
+
+    try {
+      const result = await new Promise((resolve, reject) => {
+        db.run(`
+          UPDATE stores 
+          SET connection_status = 'inactive'
+          WHERE id = ?
+        `, [store_id], function(err) {
+          if (err) reject(err);
+          else resolve(this.changes);
+        });
+      });
+
+      if (result === 0) {
+        throw new NotFoundError('Store not found');
+      }
+
+      res.json({
+        message: 'Store disconnected successfully',
+        store_id: store_id,
+        status: 'inactive'
+      });
+
+    } catch (error) {
+      next(error);
+    } finally {
+      db.close();
+    }
+  }
+);
+
 // Delete store (soft delete)
 router.delete('/:store_id',
   param('store_id').isString().notEmpty().withMessage('Store ID is required'),
@@ -321,7 +359,7 @@ router.delete('/:store_id',
       }
 
       res.json({
-        message: 'Store deactivated successfully',
+        message: 'Store removed successfully',
         store_id: store_id
       });
 

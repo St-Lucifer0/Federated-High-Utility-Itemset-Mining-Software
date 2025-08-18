@@ -5,7 +5,7 @@
 """
 
 from dataclasses import dataclass, field
-from .item import Item
+from item import Item
 from typing import Optional, List, Tuple, Union
 import copy
 

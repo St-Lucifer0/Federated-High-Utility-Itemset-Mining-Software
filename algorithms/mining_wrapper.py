@@ -23,8 +23,10 @@ def main():
         if not transactions_data:
             raise ValueError("No transactions provided")
         
-        # Convert transactions to format expected by HUI algorithm
-        transactions = []
+        # Convert transactions to format expected by algorithm
+        formatted_transactions = []
+        formatted_utilities = []
+        
         for trans_data in transactions_data:
             items = trans_data.get('items', [])
             quantities = trans_data.get('quantities', [])
@@ -33,31 +35,27 @@ def main():
             if len(items) != len(quantities) or len(items) != len(unit_utilities):
                 raise ValueError("Items, quantities, and utilities arrays must have the same length")
             
-            transaction = []
-            for i, item_name in enumerate(items):
-                try:
-                    qty = int(float(quantities[i]))
-                    util = int(float(unit_utilities[i]))
-                    total_item_utility = qty * util
-                    transaction.append(Item(str(item_name), total_item_utility))
-                except (ValueError, IndexError) as e:
-                    raise ValueError(f"Error processing item {item_name}: {e}")
-            
-            if transaction:  # Only add non-empty transactions
-                transactions.append(transaction)
+            if len(items) > 0:  # Only process non-empty transactions
+                # Convert items to integers (hash them for algorithm)
+                item_ids = [abs(hash(str(item))) % 100000 for item in items]
+                # Calculate actual utilities (quantity * unit_utility)
+                utilities = [int(float(q) * float(u)) for q, u in zip(quantities, unit_utilities)]
+                
+                formatted_transactions.append(item_ids)
+                formatted_utilities.append(utilities)
         
-        if not transactions:
+        if not formatted_transactions:
             raise ValueError("No valid transactions after processing")
         
         # Run HUI mining algorithm
         algorithm = OptimizedAlgoUPGrowth()
-        patterns = algorithm.run_algorithm(transactions, min_utility)
+        patterns = algorithm.run_algorithm_memory(formatted_transactions, formatted_utilities, float(min_utility))
         
         # Convert patterns to JSON-serializable format
         result_patterns = []
         for pattern in patterns:
             pattern_dict = {
-                'items': [item.name for item in pattern.items],
+                'items': pattern.itemset,
                 'utility': pattern.utility,
                 'support': getattr(pattern, 'support', 0.0),
                 'confidence': getattr(pattern, 'confidence', 0.0)

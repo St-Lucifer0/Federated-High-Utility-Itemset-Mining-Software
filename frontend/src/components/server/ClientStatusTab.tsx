@@ -9,6 +9,8 @@ interface ClientStatusTabProps {
 
 const ClientStatusTab: React.FC<ClientStatusTabProps> = ({ serverData, setServerData }) => {
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedClient, setSelectedClient] = useState<any>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const refreshClients = async () => {
     setRefreshing(true);
@@ -76,6 +78,59 @@ const ClientStatusTab: React.FC<ClientStatusTabProps> = ({ serverData, setServer
     if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
     if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
     return `${Math.floor(seconds / 86400)}d ago`;
+  };
+
+  const handleDisconnectClient = async (clientId: string) => {
+    if (!window.confirm('Are you sure you want to disconnect this client?')) return;
+    
+    setIsRemoving(true);
+    try {
+      await apiService.disconnectStore(clientId);
+      
+      setServerData((prev: any) => ({
+        ...prev,
+        clients: prev.clients.map((client: any) => 
+          client.id === clientId 
+            ? { ...client, status: 'inactive' }
+            : client
+        )
+      }));
+    } catch (error) {
+      console.error('Failed to disconnect client:', error);
+      alert('Failed to disconnect client. Please try again.');
+    } finally {
+      setIsRemoving(false);
+    }
+  };
+
+  const handleRemoveClient = async (clientId: string) => {
+    console.log('Remove button clicked for client:', clientId);
+    
+    if (!window.confirm('Are you sure you want to permanently remove this client? This action cannot be undone.')) {
+      console.log('User cancelled removal');
+      return;
+    }
+    
+    console.log('Starting removal process...');
+    setIsRemoving(true);
+    try {
+      console.log('Calling API to remove store:', clientId);
+      await apiService.removeStore(clientId);
+      console.log('API call successful, updating UI');
+      
+      setServerData((prev: any) => ({
+        ...prev,
+        clients: prev.clients.filter((client: any) => client.id !== clientId)
+      }));
+      
+      setSelectedClient(null);
+      console.log('Client removed successfully');
+    } catch (error) {
+      console.error('Failed to remove client:', error);
+      alert('Failed to remove client. Please try again.');
+    } finally {
+      setIsRemoving(false);
+    }
   };
 
   const activeClients = serverData.clients.filter((c: any) => c.status === 'active' || c.status === 'mining');
@@ -218,11 +273,18 @@ const ClientStatusTab: React.FC<ClientStatusTabProps> = ({ serverData, setServer
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-blue-600 hover:text-blue-900 mr-3">
+                    <button 
+                      onClick={() => setSelectedClient(client)}
+                      className="text-blue-600 hover:text-blue-900 mr-3"
+                    >
                       View Details
                     </button>
-                    <button className="text-red-600 hover:text-red-900">
-                      Disconnect
+                    <button 
+                      onClick={() => handleDisconnectClient(client.id)}
+                      disabled={isRemoving}
+                      className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                    >
+                      {isRemoving ? 'Disconnecting...' : 'Disconnect'}
                     </button>
                   </td>
                 </tr>
@@ -255,6 +317,104 @@ const ClientStatusTab: React.FC<ClientStatusTabProps> = ({ serverData, setServer
             ))}
         </div>
       </div>
+
+      {/* Client Details Modal */}
+      {selectedClient && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-start mb-6">
+              <h3 className="text-xl font-semibold text-gray-900">Client Details</h3>
+              <button
+                onClick={() => setSelectedClient(null)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Basic Info */}
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Store Name</label>
+                  <div className="text-lg font-semibold text-gray-900">{selectedClient.name}</div>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Store ID</label>
+                  <div className="text-sm text-gray-600 font-mono">{selectedClient.id}</div>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Location</label>
+                  <div className="text-sm text-gray-900">{selectedClient.location}</div>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-gray-700">IP Address</label>
+                  <div className="text-sm text-gray-600 font-mono">{selectedClient.ipAddress}</div>
+                </div>
+              </div>
+              
+              {/* Status & Stats */}
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Status</label>
+                  <div className="flex items-center mt-1">
+                    {getStatusIcon(selectedClient.status)}
+                    <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(selectedClient.status)}`}>
+                      {selectedClient.status}
+                    </span>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Last Seen</label>
+                  <div className="text-sm text-gray-900">{getTimeSince(selectedClient.lastSeen)}</div>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Transactions</label>
+                  <div className="text-lg font-bold text-blue-600">{selectedClient.transactionCount.toLocaleString()}</div>
+                </div>
+                
+                <div>
+                  <label className="text-sm font-medium text-gray-700">Patterns Contributed</label>
+                  <div className="text-lg font-bold text-green-600">{selectedClient.patternsSent}</div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Actions */}
+            <div className="mt-8 flex justify-between">
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => handleDisconnectClient(selectedClient.id)}
+                  disabled={isRemoving}
+                  className="px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 disabled:opacity-50 transition-colors"
+                >
+                  {isRemoving ? 'Processing...' : 'Disconnect Client'}
+                </button>
+                
+                <button
+                  onClick={() => handleRemoveClient(selectedClient.id)}
+                  disabled={isRemoving}
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 transition-colors"
+                >
+                  {isRemoving ? 'Removing...' : 'Remove Client'}
+                </button>
+              </div>
+              
+              <button
+                onClick={() => setSelectedClient(null)}
+                className="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

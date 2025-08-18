@@ -7,8 +7,8 @@ It provides efficient storage and retrieval of itemsets with utility information
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
-from .up_node import UPNode
-from .item import Item
+from up_node import UPNode
+from item import Item
 
 
 @dataclass

@@ -64,9 +64,18 @@ const MineTab: React.FC<MineTabProps> = ({ clientData, setClientData }) => {
               memoryUsed: 45 + Math.random() * 15 // Approximate memory usage
             };
 
+            // Transform patterns to match ResultsTab expected format
+            const transformedPatterns = results.patterns.map((pattern: any, index: number) => ({
+              id: `pattern_${index}`,
+              pattern: pattern.items, // Map 'items' to 'pattern'
+              utility: pattern.utility,
+              support: pattern.support,
+              confidence: pattern.confidence
+            }));
+
             setClientData((prev: any) => ({
               ...prev,
-              minedPatterns: results.patterns,
+              minedPatterns: transformedPatterns,
               miningStats
             }));
             
