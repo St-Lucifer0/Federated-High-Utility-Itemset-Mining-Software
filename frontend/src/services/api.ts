@@ -135,7 +135,7 @@ class ApiService {
     });
   }
 
-  async getTransactions(storeId: string, limit: number = 10000): Promise<{ transactions: Transaction[]; count: number }> {
+  async getTransactions(storeId: string, limit: number = 15000): Promise<{ transactions: Transaction[]; count: number }> {
     return this.request(`/transactions/${storeId}?limit=${limit}`);
   }
 

@@ -40,8 +40,8 @@ const ClientStatusTab: React.FC<ClientStatusTabProps> = ({ serverData, setServer
   useEffect(() => {
     refreshClients();
     
-    // Auto-refresh every 10 seconds for real-time updates
-    const interval = setInterval(refreshClients, 10000);
+    // Auto-refresh every 30 seconds for real-time updates (reduced frequency)
+    const interval = setInterval(refreshClients, 30000);
     return () => clearInterval(interval);
   }, []);
 

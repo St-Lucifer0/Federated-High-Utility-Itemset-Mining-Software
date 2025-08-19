@@ -127,8 +127,20 @@ const UploadTab: React.FC<UploadTabProps> = ({ clientData, setClientData }) => {
       setUploadStatus('success');
     } catch (error) {
       console.error('Upload failed:', error);
+      console.error('Error details:', error);
       setUploadStatus('error');
-      setValidationErrors([error instanceof Error ? error.message : 'Upload failed']);
+      
+      // More detailed error handling
+      let errorMessage = 'Upload failed';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        // If it's a validation error, try to extract more details
+        if (error.message.includes('HTTP error! status: 400')) {
+          errorMessage = 'Validation error: Please check your transaction data format';
+        }
+      }
+      
+      setValidationErrors([errorMessage]);
     }
   };
 

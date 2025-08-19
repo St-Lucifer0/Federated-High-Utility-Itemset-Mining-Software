@@ -25,7 +25,7 @@ const validateStoreId = [
 ];
 
 const validateLimit = [
-  query('limit').optional().isInt({ min: 1, max: 1000 }).withMessage('Limit must be between 1 and 1000')
+  query('limit').optional().isInt({ min: 1, max: 50000 }).withMessage('Limit must be between 1 and 50000')
 ];
 
 function handleValidationErrors(req, res, next) {
