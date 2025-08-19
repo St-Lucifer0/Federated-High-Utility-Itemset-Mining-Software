@@ -134,7 +134,7 @@ const ClientDashboard: React.FC = () => {
       {/* Tab Navigation */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="border-b border-gray-200">
-          <nav className="flex space-x-8 px-6" aria-label="Tabs">
+          <nav className="flex flex-wrap gap-2 sm:gap-4 lg:gap-8 px-4 sm:px-6 overflow-x-auto" aria-label="Tabs">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               return (
@@ -145,10 +145,11 @@ const ClientDashboard: React.FC = () => {
                     activeTab === tab.id
                       ? 'border-blue-500 text-blue-600'
                       : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm flex items-center transition-colors`}
+                  } whitespace-nowrap py-4 px-1 sm:px-2 border-b-2 font-medium text-xs sm:text-sm flex items-center transition-colors flex-shrink-0`}
                 >
-                  <Icon className="h-4 w-4 mr-2" />
-                  {tab.name}
+                  <Icon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">{tab.name}</span>
+                  <span className="sm:hidden">{tab.name.split(' ')[0]}</span>
                 </button>
               );
             })}
